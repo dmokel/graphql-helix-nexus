@@ -5,9 +5,6 @@ import Fastify from "fastify";
 import { getGraphQLParameters, processRequest, renderGraphiQL, Request, sendResult, shouldRenderGraphiQL } from "graphql-helix";
 import qs from "qs";
 
-// TODO
-// hapi会在【await sendResult(result, req.raw.res)】发生err: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
-// 先不用hapi，等待后续官方反馈
 export const startHapi = async () => {
   const server = Hapi.server({
     port: 8777,
@@ -38,13 +35,13 @@ export const startHapi = async () => {
         body: req.payload,
       };
 
-      // if (shouldRenderGraphiQL(request)) {
-      //   return h.response((
-      //     renderGraphiQL({
-      //       endpoint: "/graphql",
-      //     })
-      //   )).type("text/html");
-      // }
+      if (shouldRenderGraphiQL(request)) {
+        return h.response((
+          renderGraphiQL({
+            endpoint: "/graphql",
+          })
+        )).type("text/html");
+      }
 
       const { operationName, query, variables } = getGraphQLParameters(request);
 
@@ -56,7 +53,9 @@ export const startHapi = async () => {
         variables,
       });
 
-      await sendResult(result, req.raw.res);
+      // Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client, see https://github.com/hapijs/hapi/issues/4424
+      sendResult(result, req.raw.res);
+      return h.abandon;
     }
   })
 

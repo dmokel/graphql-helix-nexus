@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 dotenv.config({ path: path.join(process.cwd(), 'env', `${process.env.SERVER_ENV ?? ''}.env`) })
 
-import { startFastify } from "@/api/index";
+import { startHapi } from "@/api/index";
 
 process.on("unhandledRejection", (err) => {
   console.log(`unhandledRejection, err: ${err}`);
@@ -13,4 +13,4 @@ process.on("unhandledRejection", (err) => {
 
 const setup = async () => { };
 
-setup().then(() => startFastify());
+setup().then(() => startHapi());
