@@ -1,0 +1,24 @@
+# Dependencies
+node_modules
+
+# Secrets
+.env
+.env.testnet
+
+# Build
+dist
+tsconfig.tsbuildinfo
+
+# Misc
+yarn-error.log
+postgres/
+
+# IDE
+*.iml
+.idea
+.yarnclean
+coverage/
+
+# scripts
+/scripts/script*.ts
+/scripts/*.json
