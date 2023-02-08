@@ -1,6 +1,7 @@
+import { routes } from "@/api/routes";
 import { schema } from "@/api/schema";
 import Hapi from '@hapi/hapi';
-import fastify from "fastify";
+import Fastify from "fastify";
 import { getGraphQLParameters, processRequest, renderGraphiQL, Request, sendResult, shouldRenderGraphiQL } from "graphql-helix";
 import qs from "qs";
 
@@ -64,10 +65,16 @@ export const startHapi = async () => {
 }
 
 export const startFastify = async () => {
-  const server = fastify();
+  const server = Fastify({
+    logger: false,
+  });
 
-  server.get("/", (_, reply) => { reply.send(`Http and Graphql Server ${new Date()}`) });
+  // other register
 
+  // http routes register
+  server.register(routes)
+
+  // graphql endpoint register
   server.route({
     method: ["POST", "GET"],
     url: "/graphql",
@@ -103,5 +110,5 @@ export const startFastify = async () => {
     }
   });
 
-  server.listen({ port: 8777, host: "0.0.0.0" }, () => { console.log(`Server is running on http://127.0.0.1:8777`); });
+  server.listen({ port: 8777, host: "0.0.0.0" }, (_, address) => { console.log(`Server is running at ${address}`); });
 }
